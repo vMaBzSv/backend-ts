@@ -1,11 +1,11 @@
 import * as leitor from "readline-sync"
 
 export class Medicamento {
-    nome: String
-    quantEstoque: Number
-    preco: Number
+        public nome: String
+        public quantEstoque: number
+        public preco: number
 
-    constructor(nome: String, quantEstoque: Number, preco: Number){
+    constructor(nome: String, quantEstoque: number, preco: number){
         this.nome = nome
         this.quantEstoque = quantEstoque
         this.preco = preco
@@ -13,44 +13,91 @@ export class Medicamento {
 }
 
 export class Farmacia {
-    nomeFarmacia: String
-    Endereço: String
-    listaMedicamentos: Array<Medicamento>
+        public listaMedicamentos: Array<Medicamento>
 
 
 
-    constructor(nomeFarmacia: String, Endereço: String){
+    constructor(){
         this.listaMedicamentos = []
     }
 
-    vendaMedicamento(): void{
-
+    public vendaMedicamento(): void{
+        let nome = leitor.question("Informe o nome do remedio para vender: ")
+        let qtd = leitor.questionInt("Informe a quantidade: ")
+        const medicamento = this.listaMedicamentos.find((m) => m.nome === nome)
+        if (medicamento) {
+            if(medicamento.quantEstoque >= qtd) {
+                medicamento.quantEstoque -= qtd
+                console.log(`Venda realizada: ${qtd} unidades de ${medicamento.nome}`);
+            } else {
+                console.log(`Estoque insuficiente para a venda de ${qtd} unidades de ${medicamento.nome}`);
+            }
+        } else {
+            console.log(`Medicamento ${nome} não encontrado!`);
+        }
     }
 
-    compraMedicamento(): void{
-
+    public comprarMedicamento(): void{
+        let nome: String = leitor.question("Informe o nome do medicamento: ")
+        let preco = leitor.questionFloat("Informe o preco do medicamento: ")
+        let qtd = leitor.questionInt("Informe a quantidade de medicamentos a serem inseridos: ")
+        const medicamento = this.listaMedicamentos.find(m => m.nome === nome)
+        if(medicamento){
+            medicamento.quantEstoque +- qtd
+            medicamento.preco = preco
+        } else {
+            const novoMedicamento = new Medicamento(nome, qtd, preco)
+            this.listaMedicamentos.push(novoMedicamento)
+        }
+        console.log(`Compra realizada ${qtd} unidade de ${nome}`);
     }
 
-    subsMedicamento(): void{
+    public subsMedicamento(): void{
+        let nomeAntigo = leitor.question("Insira o nome do remedio a ser substituido: ")
+    
+        const medicamentoAntigo = this.listaMedicamentos.find((m) => m.nome === nomeAntigo)
+        if(medicamentoAntigo){
+            const index = this.listaMedicamentos.findIndex(m => m.nome === nomeAntigo)
+            this.listaMedicamentos.splice(index, 1)
 
+            let nomeNovo = leitor.question("Insira o nome do remedio a ser inserido no estoque: ")
+            let preco = leitor.questionFloat("Informe o preco do medicamento: ")
+            let estoque = leitor.questionInt("Informe a quantidade de medicamentos a serem inseridos: ")
+            const medicamentoNovo = new Medicamento(nomeNovo, estoque, preco)
+            this.listaMedicamentos.push(medicamentoNovo)
+            console.log("Substituicaõ realizada!");            
+        } else {
+            console.log("Medicamento nao encontrado para remocao");
+            
+        }
+    }   
+
+    public removerMedicamento(): void{
+        let nome: String = leitor.question("Informe o nome do medicamento que voce quer remover: ").toLowerCase()
+        const index = this.listaMedicamentos.findIndex((m) => m.nome === nome)
+        if(index){
+            this.listaMedicamentos.splice(index, 1)
+            console.log(`Medicamento ${nome} revomido do estoque`);
+        } else {
+            console.log(`Medicamento ${nome} não removido do estoque. Verifique o nome informado`);
+        }
     }
 
-    removerMedicamento(): void{
-        let removerM = leitor.question("Informe o nome do medicamento que voce quer remover: ")
-        this.listaMedicamentos = this.listaMedicamentos.filter(funcionario => Medicamento.nome !== removerM )
-    }
-
-    getMedicamento(): void{
-        let nomeF = leitor.question("Informe o nome do medicamento: ")
+    public inserirMedicamento(): void{
+        let nomeF: String = leitor.question("Informe o nome do medicamento: ")
         let precoF = leitor.questionFloat("Informe o preco do medicamento: ")
         let estoqueF = leitor.questionInt("Informe a quantidade de medicamentos a serem inseridos: ")
         let novoMedicamento = new Medicamento(nomeF, precoF, estoqueF)
         this.listaMedicamentos.push(novoMedicamento)
-        console.log(`O medicamento ${nomeF} foi adicionado ao seu estoque. `);
-        
     }
     
-    visuMedicamento(): void{
-        console.log(this.listaMedicamentos);
+    public visuEstoque(): void{
+        console.log('Estoque de medicamento:');
+        this.listaMedicamentos.forEach(Medicamento => {
+            console.log(`Nome: ${Medicamento.nome}`);
+            console.log(`Quantidade: ${Medicamento.quantEstoque}`);
+            console.log(`Precos: ${Medicamento.preco}`);
+        });
+        
     }
 }
